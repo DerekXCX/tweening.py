@@ -72,7 +72,9 @@ _getKeyPointFunctions = {
     "linear": _linearFormula
 }
 
-def _moveAlongKeyPoints(tween, value_to_update):
+def _moveAlongKeyPoints(tween, value_to_update, thread_id):
+    tween.active_threads.append(thread_id)
+    
     object = tween.object
     starting_value = getattr(object, value_to_update)
     resolution = tween.resolution
@@ -89,6 +91,7 @@ def _moveAlongKeyPoints(tween, value_to_update):
         last_looped = time.time()
         value = _getKeyPointFunctions[tween_info.style](time_elapsed, time_to_take, starting_value, final_value)
         setattr(object, value_to_update, value)
+        if not thread_id in tween.active_threads: break
         if (value >= final_value) or (time_elapsed >= time_to_take) or (loop_number >= resolution + 1):
             setattr(object, value_to_update, final_value)
             break
@@ -118,10 +121,12 @@ class createTween:
             self.info = info
             self.values_to_update = {}
             self.threads = {}
+            self.active_threads = []
             self.object = object
             self.paused = False
             self.playing = False
             self.times_played = 0
+            self.last_made_thread_id = 1
             
             self.resolution = 1000
         
@@ -135,7 +140,14 @@ class createTween:
                     print(f"TWEEN: Object does not have attribute {index.upper} to tween")
         else:
             print("TWEEN: Invalid tween info provided"); del(self); return
-                
+    
+    def _onThreadsFinished(self):
+        self.active_threads = []
+        for thread in self.threads:
+            thread.join()
+        self.threads = []
+        self.playing = False
+        
     def Play(self):
         if self.playing:
             print("TWEEN: Already playing a tween, please cancel or wait for finish before playing again")
@@ -143,26 +155,34 @@ class createTween:
         
         self.playing = True
         self.threads = []
+        
         for value_to_update in self.values_to_update:
-            update_thread = threading.Thread(target = _moveAlongKeyPoints, args = (self, value_to_update))
-            update_thread.start()
+            new_thread = threading.Thread(target = _moveAlongKeyPoints, args = (self, value_to_update, self.last_made_thread_id))
+            self.threads.append(new_thread)
+            self.last_made_thread_id += 1
             
-            self.threads.append(update_thread)
-        def waitForThreadsToFinish():
+        for thread in self.threads:
+            thread.start()
+            
+        def waitForThreads():
             for thread in self.threads:
                 thread.join()
             self.times_played += 1
-            self.Playing = False
-            self.threads.clear()
-        threading.Thread(target = waitForThreadsToFinish).start()
+            self._onThreadsFinished()
+        threading.Thread(target = waitForThreads).start()
+        
     def Pause(self):
         self.paused = True
+        
     def Resume(self):
         self.paused = False  
+        
     def Finished(self):
         times_played_when_started = self.times_played
+
         while (1):
             if times_played_when_started != self.times_played:
                 break
-    def Cancel():
-        pass
+            
+    def Cancel(self):
+        self._onThreadsFinished()
