@@ -23,5 +23,7 @@ f = final value
 s = starting value
 
 linear: https://www.desmos.com/calculator/u5xqiteqcx
+
 quad: https://www.desmos.com/calculator/15wivtoi3g
+
 cube: https://www.desmos.com/calculator/ngfrtlidmp
