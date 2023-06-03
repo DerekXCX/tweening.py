@@ -9,6 +9,8 @@ Tweening module for python with support for different easing styles. Second proj
 - Easing directions (currently its only 'in') 
   - note to self: out = flipped over y = x
 
+- Improve readability and organization
+
 # DOCUMENTATION: TweenInfo
 WIP
 
