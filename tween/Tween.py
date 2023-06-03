@@ -61,7 +61,6 @@ def _formatInfoDictionary(info_dictionary):
             returning = None
             
     return returning, issues
-    pass
 
 def _linearFormula(time_elapsed, time_to_take, starting_value, final_value):
     slope_one = (final_value - starting_value)
