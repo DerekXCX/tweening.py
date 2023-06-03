@@ -21,6 +21,8 @@ tween = Tween.createTween(new_object, tween_info, {
 started = time.time()
 
 tween.Play()
+tween.Cancel()
+tween.Play()
 tween.Finished()
 
 print(f"Final values: {new_object.tween_value}, {new_object.tween_value_two}")
