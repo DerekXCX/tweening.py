@@ -2,8 +2,10 @@
 Tweening module for python with different easing styles
 
 # DOCUMENTATION: TweenInfo
+WIP
 
 # DOCUMENTATION: Tween
+WIP
 
 # MISCELLANEOUS: EasingStyle Graphs
 t = time to take
