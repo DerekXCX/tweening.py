@@ -1,5 +1,5 @@
 # tweening
-Tweening module for python with different easing styles
+Tweening module for python with support for different easing styles.
 
 # DOCUMENTATION: TweenInfo
 WIP
